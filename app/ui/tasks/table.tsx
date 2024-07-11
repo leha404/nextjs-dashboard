@@ -6,13 +6,13 @@ import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
 import { fetchFilteredInvoices, fetchFilteredTasks } from '@/app/lib/data';
 
 export default async function TasksTable({
-  // query,
+  query,
   currentPage,
 }: {
-  // query: string;
+  query: string;
   currentPage: number;
 }) {
-  const tasks = await fetchFilteredTasks(currentPage);
+  const tasks = await fetchFilteredTasks(query, currentPage);
 
   return (
     <div className="mt-6 flow-root">

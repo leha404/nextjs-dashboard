@@ -220,7 +220,7 @@ export async function fetchFilteredCustomers(query: string) {
 // Todo-App section
 const TASKS_PER_PAGE = 6;
 export async function fetchFilteredTasks(
-  // query: string,
+  query: string,
   currentPage: number,
 ) {
   const offset = (currentPage - 1) * TASKS_PER_PAGE;
@@ -241,6 +241,9 @@ export async function fetchFilteredTasks(
         FROM todotasks as T
           JOIN todousers as  Cr ON T.creatorid 		  =  Cr.id
           JOIN todousers as Res ON T.responsibleuserid = Res.id
+        WHERE
+          T.name ILIKE ${`%${query}%`} OR
+          T.description ILIKE ${`%${query}%`}
       ORDER BY T.enddate ASC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
@@ -249,5 +252,24 @@ export async function fetchFilteredTasks(
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch tasks.');
+  }
+}
+
+export async function fetchTasksPages(query: string) {
+  try {
+    const count = await sql`
+      SELECT
+          COUNT(*)
+        FROM todotasks as T
+      WHERE
+        T.name ILIKE ${`%${query}%`} OR
+        T.description ILIKE ${`%${query}%`}
+    `;
+
+    const totalPages = Math.ceil(Number(count.rows[0].count) / TASKS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of tasks.');
   }
 }
