@@ -6,6 +6,11 @@ export const authConfig = {
     },
     callbacks: {
         authorized({ auth, request: { nextUrl } }) {
+            // DEBUG for seeding
+            // if (nextUrl.pathname.startsWith('/seed')) {
+            //     return true;
+            // }
+            
             const isLoggedIn = !!auth?.user;
             const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
             if (isOnDashboard) {
