@@ -128,3 +128,90 @@ export async function authenticate(
         throw error;
     }
 }
+
+// Todo-app block
+const TaskFormSchema = z.object({
+    id: z.string(),
+    taskname: z.string(),
+    description: z.string(),
+    enddate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
+        message: 'Please enter a valid date in the format YYYY-MM-DD.',
+    }),
+    status: z.enum(['todo', 'progress', 'done', 'cancelled'], {
+        invalid_type_error: 'Please select a task status.',
+    }),
+    priority: z.enum(['high', 'mid', 'low'], {
+        invalid_type_error: 'Please select a task priority.',
+    }),
+});
+
+const CreateTask = TaskFormSchema.omit({ id: true });
+// const UpdateInvoice = FormSchema.omit({ id: true, date: true });
+
+export type TaskState = {
+    errors?: {
+        taskname?: string[];
+        enddate?: string[];
+        status?: string[];
+        priority?: string[];
+    };
+    message?: string | null;
+};
+
+export async function createTask(prevState: TaskState, formData: FormData) {
+    const validatedFields = CreateTask.safeParse({
+        taskname: formData.get('taskname'),
+        description: formData.get('description'),
+        enddate: formData.get('enddate'),
+        priority: formData.get('priority'),
+        status: formData.get('status'),
+    });
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Missing Fields. Failed to Create Task.',
+        };
+    }
+
+    const { taskname, description, enddate, priority, status} = validatedFields.data
+
+    const date = new Date().toISOString().split('T')[0];
+
+    try {
+        // TODO user
+        await sql`
+            INSERT INTO todotasks (
+                name,
+                description,
+                enddate,
+                priority,
+                status,
+                creatorid,
+                responsibleuserid,
+                createdate,
+                updatedate
+            )
+            VALUES (
+                ${taskname},
+                ${description},
+                ${enddate},
+                ${priority},
+                ${status},
+                '964cbfae-ba13-4749-b098-71cbdec5cfa4',
+                '964cbfae-ba13-4749-b098-71cbdec5cfa4',
+                now() at time zone 'utc-5',
+                now() at time zone 'utc-5'
+            )
+        `;
+    } catch (error) {
+        console.log(error)
+        return {
+            error: {},
+            message: 'Database Error: Failed to Create Task.',
+        };
+    }
+
+    revalidatePath('/dashboard/tasks');
+    redirect('/dashboard/tasks')
+}

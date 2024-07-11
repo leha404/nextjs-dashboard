@@ -88,37 +88,39 @@ export default async function TasksTable({
                   key={task.id}
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
-                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
+                  <td className="py-3 pl-6 pr-3 w-1/12">
                     <div className="flex items-center gap-3">
                       <p>{task.name}</p>
                     </div>
                   </td>
-                  <td className="px-3 py-3">
-                    {task.description}
+                  <td className="px-6 py-3 w-1/6">
+                    <div className="flex items-center gap-4">
+                      <p>{task.description}</p>
+                    </div>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
+                  <td className="whitespace-nowrap px-3 py-3 w-1/12">
                     <TasksStatus status={task.status} />
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
+                  <td className="whitespace-nowrap px-3 py-3 w-1/12">
                     <TasksPriority priority={task.priority} />
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
+                  <td className="whitespace-nowrap px-3 py-3 w-1/12">
                     {formatDateToLocal(task.end_date)}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
+                  <td className="whitespace-nowrap px-3 py-3 w-1/12">
                     {formatDateToLocal(task.create_date)}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
+                  <td className="px-3 py-3 w-1/12">
                     {task.creator}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
+                  <td className="px-3 py-3 w-1/12">
                     {task.responsible}
                   </td>
-                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
+                  <td className="py-3 pl-6 pr-3 w-1/12">
                     <div className="flex justify-end gap-3">
                       {/* <UpdateInvoice id={invoice.id} />
                       <DeleteInvoice id={invoice.id} /> */}
-                      <p>Кнопки будут тут!</p>
+                      <p>BUTTONS!</p>
                     </div>
                   </td>
                 </tr>

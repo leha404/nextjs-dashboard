@@ -1,23 +1,25 @@
-import Form from '@/app/ui/invoices/create-form';
+import Form from '@/app/ui/tasks/create-form';
 import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
 import { fetchCustomers } from '@/app/lib/data';
 
 export default async function Page() {
-    const customers = await fetchCustomers();
+    // TODO Подчиненные
+    // const customers = await fetchCustomers();
 
     return (
         <main>
             <Breadcrumbs
                 breadcrumbs={[
-                    { label: 'Invoices', href: '/dashboard/invoices' },
+                    { label: 'Tasks', href: '/dashboard/tasks' },
                     {
-                        label: 'Create Invoice',
-                        href: '/dashboard/invoices/create',
+                        label: 'Create Task',
+                        href: '/dashboard/tasks/create',
                         active: true,
                     },
                 ]}
             />
-            <Form customers={customers} />
+            {/* TODO props */}
+            <Form />
         </main>
     );
 }
