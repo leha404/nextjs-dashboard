@@ -215,3 +215,13 @@ export async function createTask(prevState: TaskState, formData: FormData) {
     revalidatePath('/dashboard/tasks');
     redirect('/dashboard/tasks')
 }
+
+export async function deleteTask(id: string) {
+    try {
+        await sql`DELETE FROM todotasks WHERE id = ${id}`;
+        revalidatePath('/dashboard/tasks');
+        return { message: 'Task Deleted.' };
+    } catch (error) {
+        return { errors: {}, message: 'Database Error: Failed to Delete Invoice.' };
+    }
+}

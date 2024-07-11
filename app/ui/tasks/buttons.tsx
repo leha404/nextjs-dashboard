@@ -1,4 +1,4 @@
-import { deleteInvoice } from '@/app/lib/actions';
+import { deleteInvoice, deleteTask } from '@/app/lib/actions';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
@@ -25,17 +25,17 @@ export function CreateTask() {
 //   );
 // }
 
-// export function DeleteInvoice({ id }: { id: string }) {
-//   const deleteInvoiceWithId = deleteInvoice.bind(null, id);
+export function DeleteTask({ id }: { id: string }) {
+  const deleteTaskWithId = deleteTask.bind(null, id);
 
-//   return (
-//     <>
-//       <form action={deleteInvoiceWithId}>
-//         <button className="rounded-md border p-2 hover:bg-gray-100">
-//           <span className="sr-only">Delete</span>
-//           <TrashIcon className="w-5" />
-//         </button>
-//       </form>
-//     </>
-//   );
-// }
+  return (
+    <>
+      <form action={deleteTaskWithId}>
+        <button className="rounded-md border p-2 hover:bg-gray-100">
+          <span className="sr-only">Delete</span>
+          <TrashIcon className="w-5" />
+        </button>
+      </form>
+    </>
+  );
+}
