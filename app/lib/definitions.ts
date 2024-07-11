@@ -103,9 +103,24 @@ export type TodoTask = {
   id: string;
   name: string;
   description: string;
-  date_end: string;
+  create_date: string;
+  update_date: string;
+  end_date: string;
   priority: 'high' | 'mid' | 'low';
   status: 'todo' | 'progress' | 'done' | 'cancelled';
   creator_id: string;
   responsible_user_id: string;
 }
+
+export type TasksTable = {
+  id: string;
+  name: string;
+  description: string;
+  create_date: string;
+  update_date: string;
+  end_date: string;
+  priority: 'high' | 'mid' | 'low';
+  status: 'todo' | 'progress' | 'done' | 'cancelled';
+  creator: string;
+  responsible: string;
+};

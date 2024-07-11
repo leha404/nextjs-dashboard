@@ -47,7 +47,9 @@ const tasks = [
   {
     name: 'Проверить ToDo app',
     description: null,
-    dateEnd: '2024-07-11',
+    createDate: '2024-07-11',
+    updateDate: '2024-07-11',
+    endDate: '2024-07-11',
     priority: 'high',
     status: 'todo',
     creator_id: 'cab26f1b-d76c-4d24-9b99-9aa10882498a', // ivanov
@@ -56,7 +58,9 @@ const tasks = [
   {
     name: 'Ответить на email',
     description: 'Валентин, проверь почту. И создай задачу в ToDoApp',
-    dateEnd: '2024-07-11',
+    createDate: '2024-07-11',
+    updateDate: '2024-07-11',
+    endDate: '2024-07-11',
     priority: 'mid',
     status: 'progress',
     creator_id: '964cbfae-ba13-4749-b098-71cbdec5cfa4', // alekseev

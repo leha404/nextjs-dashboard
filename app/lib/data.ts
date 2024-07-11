@@ -6,6 +6,7 @@ import {
   InvoicesTable,
   LatestInvoiceRaw,
   Revenue,
+  TasksTable,
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -213,5 +214,40 @@ export async function fetchFilteredCustomers(query: string) {
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch customer table.');
+  }
+}
+
+// Todo-App section
+const TASKS_PER_PAGE = 6;
+export async function fetchFilteredTasks(
+  // query: string,
+  currentPage: number,
+) {
+  const offset = (currentPage - 1) * TASKS_PER_PAGE;
+
+  try {
+    const tasks = await sql<TasksTable>`
+      SELECT
+          T.id,
+          T.name,
+          T.description,
+          T.createdate as create_date,
+          T.updatedate as update_date,
+          T.enddate as end_date,
+          T.priority,
+          T.status,
+          Cr.middlename || ' ' || Cr.firstname || ' (' || Cr.email || ')' as creator,
+          Res.middlename || ' ' || Res.firstname || ' (' || Res.email || ')' as responsible
+        FROM todotasks as T
+          JOIN todousers as  Cr ON T.creatorid 		  =  Cr.id
+          JOIN todousers as Res ON T.responsibleuserid = Res.id
+      ORDER BY T.enddate ASC
+      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    `;
+
+    return tasks.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch tasks.');
   }
 }
