@@ -86,3 +86,59 @@ export type InvoiceForm = {
   amount: number;
   status: 'pending' | 'paid';
 };
+
+// Todo-App tables
+export type TodoUser = {
+  id: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  login: string;
+  password: string;
+  is_manager: boolean;
+  manager_id: string | null;
+};
+
+export type TodoTask = {
+  id: string;
+  name: string;
+  description: string;
+  create_date: string;
+  update_date: string;
+  end_date: string;
+  priority: 'high' | 'mid' | 'low';
+  status: 'todo' | 'progress' | 'done' | 'cancelled';
+  creator_id: string;
+  responsible_user_id: string;
+}
+
+export type TasksTable = {
+  id: string;
+  name: string;
+  description: string;
+  create_date: string;
+  update_date: string;
+  end_date: string;
+  priority: 'high' | 'mid' | 'low';
+  status: 'todo' | 'progress' | 'done' | 'cancelled';
+  creator: string;
+  responsible: string;
+  creator_id: string;
+};
+
+export type TaskEditForm = {
+  id: string;
+  name: string;
+  description: string;
+  end_date: string;
+  priority: 'high' | 'mid' | 'low';
+  status: 'todo' | 'progress' | 'done' | 'cancelled';
+  responsible_id: string;
+  creator_id: string;
+  creator_email: string;
+};
+
+export type TaskUser = {
+  id: string;
+  email: string;
+};

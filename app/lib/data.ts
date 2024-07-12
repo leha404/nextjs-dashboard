@@ -6,6 +6,10 @@ import {
   InvoicesTable,
   LatestInvoiceRaw,
   Revenue,
+  TaskEditForm,
+  TasksTable,
+  TaskUser,
+  User
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -213,5 +217,128 @@ export async function fetchFilteredCustomers(query: string) {
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch customer table.');
+  }
+}
+
+// Todo-App section
+const TASKS_PER_PAGE = 6;
+export async function fetchFilteredTasks(
+  query: string,
+  currentPage: number,
+  userId: string
+) {
+  const offset = (currentPage - 1) * TASKS_PER_PAGE;
+
+  try {
+    const tasks = await sql<TasksTable>`
+      SELECT
+          T.id,
+          T.name,
+          T.description,
+          T.createdate as create_date,
+          T.updatedate as update_date,
+          T.enddate as end_date,
+          T.priority,
+          T.status,
+          Cr.middlename || ' ' || Cr.firstname || ' (' || Cr.email || ')' as creator,
+          Res.middlename || ' ' || Res.firstname || ' (' || Res.email || ')' as responsible,
+          Cr.id as creator_id
+        FROM todotasks as T
+          JOIN todousers as  Cr ON T.creatorid 		  =  Cr.id
+          JOIN todousers as Res ON T.responsibleuserid = Res.id
+        WHERE
+          (
+            T.name ILIKE ${`%${query}%`} OR
+            T.description ILIKE ${`%${query}%`}
+          ) and (Cr.id = ${userId} OR Res.id = ${userId})
+      ORDER BY Res.middlename, T.updatedate desc, T.enddate
+      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    `;
+
+    return tasks.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch tasks.');
+  }
+}
+
+export async function fetchTasksPages(
+  query: string,
+  userId: string
+) {
+  try {
+    const count = await sql`
+      SELECT
+          COUNT(*)
+        FROM todotasks as T
+      WHERE
+      (
+        T.name ILIKE ${`%${query}%`} OR
+        T.description ILIKE ${`%${query}%`}
+      ) and (T.creatorid = ${userId} OR T.responsibleuserid = ${userId})
+    `;
+
+    const totalPages = Math.ceil(Number(count.rows[0].count) / TASKS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of tasks.');
+  }
+}
+
+export async function fetchTaskById(id: string) {
+  try {
+    const data = await sql<TaskEditForm>`
+      SELECT
+        T.id,
+        T.name,
+        T.description,
+        TO_CHAR(T.enddate, 'YYYY-MM-DD') AS end_date,
+        T.priority,
+        T.status,
+        T.responsibleuserid as responsible_id,
+        T.creatorid as creator_id,
+        U.email as creator_email
+      FROM todotasks as T
+        JOIN todousers as U on T.creatorid = U.id
+      WHERE T.id = ${id};
+    `;
+
+    const task = data.rows[0];
+
+    return task;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch invoice.');
+  }
+}
+
+export async function getUserIdByMail(email: string) {
+  try {
+    const data = await sql<User>`SELECT * FROM todousers WHERE email=${email}`;
+    return data.rows[0].id;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch user.');
+  }
+}
+
+// Только сам пользователь или его подчиненные. Начальника не покажет
+export async function fetchTaskUsers(userId: string) {
+  try {
+    const data = await sql<TaskUser>`
+      SELECT
+          id,
+          email
+        FROM todousers
+      WHERE id = ${userId} OR managerid = ${userId}
+      ORDER BY email ASC
+    `;
+
+    const customers = data.rows;
+    return customers;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch all customers.');
   }
 }

@@ -128,3 +128,153 @@ export async function authenticate(
         throw error;
     }
 }
+
+// Todo-app block
+const TaskFormSchema = z.object({
+    id: z.string(),
+    creatorId: z.string(),
+    responsibleId: z.string(),
+    taskname: z.string(),
+    description: z.string(),
+    enddate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
+        message: 'Please enter a valid date in the format YYYY-MM-DD.',
+    }),
+    status: z.enum(['todo', 'progress', 'done', 'cancelled'], {
+        invalid_type_error: 'Please select a task status.',
+    }),
+    priority: z.enum(['high', 'mid', 'low'], {
+        invalid_type_error: 'Please select a task priority.',
+    }),
+});
+
+const CreateTask = TaskFormSchema.omit({ id: true });
+const UpdateTask = TaskFormSchema.omit({ id: true, creatorId: true });
+
+export type TaskState = {
+    errors?: {
+        taskname?: string[];
+        enddate?: string[];
+        status?: string[];
+        priority?: string[];
+        responsibleId?: string[];
+    };
+    message?: string | null;
+};
+
+export async function createTask(prevState: TaskState, formData: FormData) {
+    const validatedFields = CreateTask.safeParse({
+        taskname: formData.get('taskname'),
+        description: formData.get('description'),
+        enddate: formData.get('enddate'),
+        priority: formData.get('priority'),
+        status: formData.get('status'),
+        creatorId: formData.get('creatorId'),
+        responsibleId: formData.get('responsibleId'),
+    });
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Missing Fields. Failed to Create Task.',
+        };
+    }
+
+    const { taskname, description, enddate, priority, status, creatorId, responsibleId } = validatedFields.data
+
+    try {
+        await sql`
+            INSERT INTO todotasks (
+                name,
+                description,
+                enddate,
+                priority,
+                status,
+                creatorid,
+                responsibleuserid,
+                createdate,
+                updatedate
+            )
+            VALUES (
+                ${taskname},
+                ${description},
+                ${enddate},
+                ${priority},
+                ${status},
+                ${creatorId},
+                ${responsibleId},
+                now() at time zone 'utc-5',
+                now() at time zone 'utc-5'
+            )
+        `;
+    } catch (error) {
+        console.log(error)
+        return {
+            error: {},
+            message: 'Database Error: Failed to Create Task.',
+        };
+    }
+
+    revalidatePath('/dashboard/tasks');
+    redirect('/dashboard/tasks')
+}
+
+export async function deleteTask(id: string) {
+    try {
+        await sql`DELETE FROM todotasks WHERE id = ${id}`;
+        revalidatePath('/dashboard/tasks');
+        return { message: 'Task Deleted.' };
+    } catch (error) {
+        return { errors: {}, message: 'Database Error: Failed to Delete Invoice.' };
+    }
+}
+
+export async function updateTask(id: string, prevState: State, formData: FormData) {
+    const validatedFields = UpdateTask.safeParse({
+        taskname: formData.get('taskname'),
+        description: formData.get('description'),
+        enddate: formData.get('enddate'),
+        priority: formData.get('priority'),
+        status: formData.get('status'),
+        responsibleId: formData.get('responsibleId'),
+    })
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Missing Fields. Failed to Update Task.',
+        };
+    }
+
+    const {
+        taskname,
+        description,
+        enddate,
+        priority,
+        status,
+        responsibleId
+    } = validatedFields.data
+
+    try {
+        await sql`
+            UPDATE todotasks
+            SET 
+                name=${taskname}, 
+                description=${description}, 
+                enddate=${enddate}, 
+                priority=${priority}, 
+                status=${status},
+                responsibleuserid=${responsibleId},
+                updatedate=now() at time zone 'utc-5'
+            WHERE id=${id}
+        `;
+    } catch (error) {
+        console.log(error)
+        return {
+            error: {},
+            message: 'Database Error: Failed to Update Task.',
+        };
+    }
+
+    revalidatePath('/dashboard/tasks');
+    redirect('/dashboard/tasks');
+}

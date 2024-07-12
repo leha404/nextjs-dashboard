@@ -6,13 +6,18 @@ export const authConfig = {
     },
     callbacks: {
         authorized({ auth, request: { nextUrl } }) {
+            // DEBUG for seeding
+            // if (nextUrl.pathname.startsWith('/seed')) {
+            //     return true;
+            // }
+            
             const isLoggedIn = !!auth?.user;
-            const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
-            if (isOnDashboard) {
+            const isOnTasks = nextUrl.pathname.startsWith('/dashboard/tasks');
+            if (isOnTasks) {
                 if (isLoggedIn) return true;
                 return false; // Redirect unauthenticated users to login page
             } else if (isLoggedIn) {
-                return Response.redirect(new URL('/dashboard', nextUrl));
+                return Response.redirect(new URL('/dashboard/tasks', nextUrl));
             }
             return true;
         },
