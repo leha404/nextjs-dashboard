@@ -146,7 +146,7 @@ const TaskFormSchema = z.object({
 });
 
 const CreateTask = TaskFormSchema.omit({ id: true });
-// const UpdateInvoice = FormSchema.omit({ id: true, date: true });
+const UpdateTask = TaskFormSchema.omit({ id: true });
 
 export type TaskState = {
     errors?: {
@@ -224,4 +224,44 @@ export async function deleteTask(id: string) {
     } catch (error) {
         return { errors: {}, message: 'Database Error: Failed to Delete Invoice.' };
     }
+}
+
+export async function updateTask(id: string, prevState: State, formData: FormData) {
+    const validatedFields = UpdateTask.safeParse({
+        taskname: formData.get('taskname'),
+        description: formData.get('description'),
+        enddate: formData.get('enddate'),
+        priority: formData.get('priority'),
+        status: formData.get('status'),
+    })
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Missing Fields. Failed to Update Task.',
+        };
+    }
+
+    const { 
+        taskname,
+        description,
+        enddate,
+        priority,
+        status
+     } = validatedFields.data
+
+    try {
+        await sql`
+            UPDATE todotasks
+            SET name=${taskname}, description=${description}, enddate=${enddate}, priority=${priority}, status=${status}
+            WHERE id=${id}
+        `;
+    } catch (error) {
+        return {
+            message: 'Database Error: Failed to Update Task.',
+        };
+    }
+
+    revalidatePath('/dashboard/tasks');
+    redirect('/dashboard/tasks');
 }

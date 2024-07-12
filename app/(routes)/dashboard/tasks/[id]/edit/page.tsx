@@ -1,16 +1,22 @@
-import Form from '@/app/ui/invoices/edit-form';
+import Form from '@/app/ui/tasks/edit-form';
 import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
-import { fetchCustomers, fetchInvoiceById } from '@/app/lib/data';
+import { fetchCustomers, fetchInvoiceById, fetchTaskById } from '@/app/lib/data';
 import { notFound } from 'next/navigation';
 
 export default async function Page({ params }: { params: { id: string } }) {
     const id = params.id;
-    const [invoice, customers] = await Promise.all([
-        fetchInvoiceById(id),
-        fetchCustomers(),
-    ]);
+    // TODO
+    // const [invoice, customers] = await Promise.all([
+    //     fetchInvoiceById(id),
+    //     fetchCustomers(),
+    // ]);
 
-    if (!invoice) {
+    const [task] = await Promise.all([
+        fetchTaskById(id),
+    ]);
+    
+
+    if (!task) {
         notFound();
     }
 
@@ -18,15 +24,15 @@ export default async function Page({ params }: { params: { id: string } }) {
         <main>
             <Breadcrumbs
                 breadcrumbs={[
-                    { label: 'Invoices', href: '/dashboard/invoices' },
+                    { label: 'Tasks', href: '/dashboard/tasks' },
                     {
-                        label: 'Edit Invoice',
-                        href: `/dashboard/invoices/${id}/edit`,
+                        label: 'Edit Task',
+                        href: `/dashboard/tasks/${id}/edit`,
                         active: true,
                     },
                 ]}
             />
-            <Form invoice={invoice} customers={customers} />
+            <Form task={task} />
         </main>
     );
 }

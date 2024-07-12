@@ -6,6 +6,7 @@ import {
   InvoicesTable,
   LatestInvoiceRaw,
   Revenue,
+  TaskEditForm,
   TasksTable,
 } from './definitions';
 import { formatCurrency } from './utils';
@@ -271,5 +272,28 @@ export async function fetchTasksPages(query: string) {
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch total number of tasks.');
+  }
+}
+
+export async function fetchTaskById(id: string) {
+  try {
+    const data = await sql<TaskEditForm>`
+      SELECT
+        T.id,
+        T.name,
+        T.description,
+        TO_CHAR(T.enddate, 'YYYY-MM-DD') AS end_date,
+        T.priority,
+        T.status
+      FROM todotasks as T
+      WHERE T.id = ${id};
+    `;
+
+    const task = data.rows[0];
+
+    return task;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch invoice.');
   }
 }

@@ -124,3 +124,12 @@ export type TasksTable = {
   creator: string;
   responsible: string;
 };
+
+export type TaskEditForm = {
+  id: string;
+  name: string;
+  description: string;
+  end_date: string;
+  priority: 'high' | 'mid' | 'low';
+  status: 'todo' | 'progress' | 'done' | 'cancelled';
+};

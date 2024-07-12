@@ -14,16 +14,16 @@ export function CreateTask() {
   );
 }
 
-// export function UpdateInvoice({ id }: { id: string }) {
-//   return (
-//     <Link
-//       href={`/dashboard/invoices/${id}/edit`}
-//       className="rounded-md border p-2 hover:bg-gray-100"
-//     >
-//       <PencilIcon className="w-5" />
-//     </Link>
-//   );
-// }
+export function UpdateTask({ id }: { id: string }) {
+  return (
+    <Link
+      href={`/dashboard/tasks/${id}/edit`}
+      className="rounded-md border p-2 hover:bg-gray-100"
+    >
+      <PencilIcon className="w-5" />
+    </Link>
+  );
+}
 
 export function DeleteTask({ id }: { id: string }) {
   const deleteTaskWithId = deleteTask.bind(null, id);

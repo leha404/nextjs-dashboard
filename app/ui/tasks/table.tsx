@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { DeleteTask } from '@/app/ui/tasks/buttons';
+import { DeleteTask, UpdateTask } from '@/app/ui/tasks/buttons';
 import TasksStatus from '@/app/ui/tasks/status';
 import TasksPriority from '@/app/ui/tasks/priority';
 import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
@@ -42,8 +42,7 @@ export default async function TasksTable({
                     <p>Priority: <TasksPriority priority={task.priority} /></p>
                   </div>
                   <div className="flex justify-end gap-2">
-                    {/* TODO */}
-                    {/* <UpdateInvoice id={invoice.id} /> */}
+                    <UpdateTask id={task.id} />
                     <DeleteTask id={task.id} />
                   </div>
                 </div>
@@ -118,7 +117,7 @@ export default async function TasksTable({
                   </td>
                   <td className="py-3 pl-6 pr-3 w-1/12">
                     <div className="flex justify-end gap-3">
-                      {/* <UpdateInvoice id={invoice.id} /> */}
+                      <UpdateTask id={task.id} />
                       <DeleteTask id={task.id} />
                     </div>
                   </td>
