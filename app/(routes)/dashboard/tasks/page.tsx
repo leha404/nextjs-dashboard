@@ -5,7 +5,7 @@ import { CreateTask } from '@/app/ui/tasks/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
-import { fetchInvoicesPages, fetchTasksPages, getUserIdByMail } from '@/app/lib/data';
+import { fetchInvoicesPages, fetchTasksPages, fetchTaskUsers, getUserIdByMail } from '@/app/lib/data';
 import { auth } from '@/auth';
 
 export default async function Page({
@@ -25,6 +25,7 @@ export default async function Page({
     const currentPage = Number(searchParams?.page) || 1;
 
     const totalPages = await fetchTasksPages(query, userId);
+    const taskUsers = await fetchTaskUsers(userId);
 
     return (
         <div className="w-full">
@@ -34,7 +35,7 @@ export default async function Page({
             </div>
             <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
                 <Search placeholder="Search tasks..." />
-                <CreateTask />
+                <CreateTask creatorId={userId} taskUsers={taskUsers}/>
             </div>
             <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
                 <Table query={query} currentPage={currentPage} userId={userId} />
