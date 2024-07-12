@@ -241,7 +241,8 @@ export async function fetchFilteredTasks(
           T.priority,
           T.status,
           Cr.middlename || ' ' || Cr.firstname || ' (' || Cr.email || ')' as creator,
-          Res.middlename || ' ' || Res.firstname || ' (' || Res.email || ')' as responsible
+          Res.middlename || ' ' || Res.firstname || ' (' || Res.email || ')' as responsible,
+          Cr.id as creator_id
         FROM todotasks as T
           JOIN todousers as  Cr ON T.creatorid 		  =  Cr.id
           JOIN todousers as Res ON T.responsibleuserid = Res.id
@@ -289,8 +290,12 @@ export async function fetchTaskById(id: string) {
         T.description,
         TO_CHAR(T.enddate, 'YYYY-MM-DD') AS end_date,
         T.priority,
-        T.status
+        T.status,
+        T.responsibleuserid as responsible_id,
+        T.creatorid as creator_id,
+        U.email as creator_email
       FROM todotasks as T
+        JOIN todousers as U on T.creatorid = U.id
       WHERE T.id = ${id};
     `;
 

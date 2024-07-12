@@ -17,18 +17,16 @@ import TasksPriority from '@/app/ui/tasks/priority';
 export default function EditInvoiceForm({
   task,
   taskUsers,
-  creatorId
+  userId
 }: {
   task: TaskEditForm;
   taskUsers: TaskUser[];
-  creatorId: string;
+  userId: string;
 }) {
   const initialState: TaskState = { message: null, errors: {} };
 
   const updateTaskWithId = updateTask.bind(null, task.id);
   const [state, formAction] = useActionState(updateTaskWithId, initialState);
-
-  const creatorEmail = taskUsers.find((user) => user.id === creatorId)?.email
 
   return (
     <form action={formAction}>
@@ -39,10 +37,21 @@ export default function EditInvoiceForm({
         <div className="mb-4">
           <div className="relative mt-2 rounded-md">
             <div className="relative">
-              <h1 className="mb-2 block text-sm">Creator: <div className="font-medium">{creatorEmail}</div></h1>
+              <h1 className="mb-2 block text-sm">Creator: <div className="font-medium">{task.creator_email}</div></h1>
             </div>
           </div>
         </div>
+
+        {task.creator_id !== userId ? 
+          <div className="mb-4">
+            <div className="relative mt-2 rounded-md">
+              <div className="relative">
+                <h1 className="mb-2 block text-sm">As responsible you can change ONLY status!</h1>
+              </div>
+            </div>
+          </div>
+        : ''}
+        
 
         {/* Task Users */}
         <div className="mb-4">
@@ -50,12 +59,16 @@ export default function EditInvoiceForm({
             Choose responsible
           </label>
           <div className="relative">
+            {task.creator_id !== userId && (
+                <input type="hidden" name="responsibleId" value={task.responsible_id} />
+            )}
             <select
               id="responsible"
               name="responsibleId"
               className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-              defaultValue=""
+              defaultValue={task.responsible_id}
               aria-describedby="responsible-error"
+              disabled={task.creator_id !== userId}
             >
               <option value="" disabled>
                 Select a responsible
@@ -94,6 +107,7 @@ export default function EditInvoiceForm({
                 aria-describedby="taskname-error"
                 defaultValue={task.name}
                 required
+                readOnly={task.creator_id !== userId}
               />
             </div>
           </div>
@@ -121,6 +135,7 @@ export default function EditInvoiceForm({
                 placeholder="Enter description"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 defaultValue={task.description}
+                readOnly={task.creator_id !== userId}
               />
             </div>
           </div>
@@ -141,6 +156,7 @@ export default function EditInvoiceForm({
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 aria-describedby="enddate-error"
                 defaultValue={task.end_date}
+                readOnly={task.creator_id !== userId}
               />
             </div>
           </div>
@@ -188,6 +204,7 @@ export default function EditInvoiceForm({
                   value="progress"
                   className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
                   defaultChecked={task.status === 'progress'}
+                  required
                 />
                 <label
                   htmlFor="progress"
@@ -205,6 +222,7 @@ export default function EditInvoiceForm({
                   value="done"
                   className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
                   defaultChecked={task.status === 'done'}
+                  required
                 />
                 <label
                   htmlFor="done"
@@ -222,6 +240,7 @@ export default function EditInvoiceForm({
                   value="cancelled"
                   className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
                   defaultChecked={task.status === 'cancelled'}
+                  required
                 />
                 <label
                   htmlFor="cancelled"
@@ -250,7 +269,9 @@ export default function EditInvoiceForm({
           </legend>
           <div className="rounded-md border border-gray-200 bg-white px-[14px] py-3" aria-describedby="priority-error">
             <div className="flex gap-4">
-
+            {task.creator_id !== userId && (
+                <input type="hidden" name="priority" value={task.priority} />
+            )}
               <div className="flex items-center">
                 <input
                   id="high"
@@ -260,6 +281,7 @@ export default function EditInvoiceForm({
                   className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
                   required
                   defaultChecked={task.priority === 'high'}
+                  disabled={task.creator_id !== userId}
                 />
                 <label
                   htmlFor="high"
@@ -278,6 +300,7 @@ export default function EditInvoiceForm({
                   className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
                   required
                   defaultChecked={task.priority === 'mid'}
+                  disabled={task.creator_id !== userId}
                 />
                 <label
                   htmlFor="mid"
@@ -296,6 +319,7 @@ export default function EditInvoiceForm({
                   className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
                   required
                   defaultChecked={task.priority === 'low'}
+                  disabled={task.creator_id !== userId}
                 />
                 <label
                   htmlFor="low"

@@ -123,6 +123,7 @@ export type TasksTable = {
   status: 'todo' | 'progress' | 'done' | 'cancelled';
   creator: string;
   responsible: string;
+  creator_id: string;
 };
 
 export type TaskEditForm = {
@@ -132,6 +133,9 @@ export type TaskEditForm = {
   end_date: string;
   priority: 'high' | 'mid' | 'low';
   status: 'todo' | 'progress' | 'done' | 'cancelled';
+  responsible_id: string;
+  creator_id: string;
+  creator_email: string;
 };
 
 export type TaskUser = {

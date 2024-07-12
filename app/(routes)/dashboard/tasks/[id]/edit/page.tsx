@@ -34,7 +34,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                     },
                 ]}
             />
-            <Form task={task} taskUsers={taskUsers} creatorId={userId} />
+            <Form task={task} taskUsers={taskUsers} userId={userId} />
         </main>
     );
 }
