@@ -27,7 +27,11 @@ export function CreateTask({creatorId, taskUsers}: {
         <PlusIcon className="h-5 md:ml-4" />
       </button>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <CreateForm creatorId={creatorId} taskUsers={taskUsers} />
+        <CreateForm 
+          creatorId={creatorId} 
+          taskUsers={taskUsers} 
+          onClose={() => setIsModalOpen(false)} // Передаем функцию закрытия
+        />
       </Modal>
     </>
   );

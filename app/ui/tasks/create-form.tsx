@@ -14,17 +14,25 @@ import { useActionState } from 'react';
 import TasksStatus from '@/app/ui/tasks/status';
 import TasksPriority from '@/app/ui/tasks/priority';
 
-export default function CreateForm({creatorId, taskUsers}: { 
+export default function CreateForm({creatorId, taskUsers, onClose}: { 
   creatorId: string, 
-  taskUsers: TaskUser[]
+  taskUsers: TaskUser[],
+  onClose: () => void
 }) {
   const initialState: TaskState = {message: null, errors: {}}
   const [state, formAction] = useActionState(createTask, initialState);
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.target as HTMLFormElement);
+    await formAction(formData);
+    onClose(); // Закрываем модальное окно
+  };
+
   const creatorEmail = taskUsers.find((user) => user.id === creatorId)?.email
 
   return (
-    <form action={formAction}>
+    <form onSubmit={handleSubmit}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Creator Fixed */}
         <div className="mb-4">
