@@ -263,7 +263,8 @@ export async function updateTask(id: string, prevState: State, formData: FormDat
                 enddate=${enddate}, 
                 priority=${priority}, 
                 status=${status},
-                responsibleuserid=${responsibleId}
+                responsibleuserid=${responsibleId},
+                updatedate=now() at time zone 'utc-5'
             WHERE id=${id}
         `;
     } catch (error) {

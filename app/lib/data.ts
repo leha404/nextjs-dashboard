@@ -251,7 +251,7 @@ export async function fetchFilteredTasks(
             T.name ILIKE ${`%${query}%`} OR
             T.description ILIKE ${`%${query}%`}
           ) and (Cr.id = ${userId} OR Res.id = ${userId})
-      ORDER BY T.enddate ASC
+      ORDER BY Res.middlename, T.updatedate desc, T.enddate
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
 
@@ -262,15 +262,20 @@ export async function fetchFilteredTasks(
   }
 }
 
-export async function fetchTasksPages(query: string) {
+export async function fetchTasksPages(
+  query: string,
+  userId: string
+) {
   try {
     const count = await sql`
       SELECT
           COUNT(*)
         FROM todotasks as T
       WHERE
+      (
         T.name ILIKE ${`%${query}%`} OR
         T.description ILIKE ${`%${query}%`}
+      ) and (T.creatorid = ${userId} OR T.responsibleuserid = ${userId})
     `;
 
     const totalPages = Math.ceil(Number(count.rows[0].count) / TASKS_PER_PAGE);
