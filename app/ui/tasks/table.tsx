@@ -8,11 +8,13 @@ import { fetchFilteredInvoices, fetchFilteredTasks } from '@/app/lib/data';
 export default async function TasksTable({
   query,
   currentPage,
+  userId
 }: {
   query: string;
   currentPage: number;
+  userId: string
 }) {
-  const tasks = await fetchFilteredTasks(query, currentPage);
+  const tasks = await fetchFilteredTasks(query, currentPage, userId);
 
   return (
     <div className="mt-6 flow-root">

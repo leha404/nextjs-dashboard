@@ -15,6 +15,9 @@ export default async function Page({
         page?: string;
     };
 }) {
+    // TODO get from auth
+    const userId = '964cbfae-ba13-4749-b098-71cbdec5cfa4'
+
     const query = searchParams?.query || '';
     const currentPage = Number(searchParams?.page) || 1;
 
@@ -30,7 +33,7 @@ export default async function Page({
                 <CreateTask />
             </div>
             <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
-                <Table query={query} currentPage={currentPage} />
+                <Table query={query} currentPage={currentPage} userId={userId} />
             </Suspense>
             <div className="mt-5 flex w-full justify-center">
                 <Pagination totalPages={totalPages} />

@@ -223,6 +223,7 @@ const TASKS_PER_PAGE = 6;
 export async function fetchFilteredTasks(
   query: string,
   currentPage: number,
+  userId: string
 ) {
   const offset = (currentPage - 1) * TASKS_PER_PAGE;
 
@@ -243,8 +244,10 @@ export async function fetchFilteredTasks(
           JOIN todousers as  Cr ON T.creatorid 		  =  Cr.id
           JOIN todousers as Res ON T.responsibleuserid = Res.id
         WHERE
-          T.name ILIKE ${`%${query}%`} OR
-          T.description ILIKE ${`%${query}%`}
+          (
+            T.name ILIKE ${`%${query}%`} OR
+            T.description ILIKE ${`%${query}%`}
+          ) and (Cr.id = ${userId} OR Res.id = ${userId})
       ORDER BY T.enddate ASC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
