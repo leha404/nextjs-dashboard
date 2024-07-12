@@ -133,3 +133,8 @@ export type TaskEditForm = {
   priority: 'high' | 'mid' | 'low';
   status: 'todo' | 'progress' | 'done' | 'cancelled';
 };
+
+export type TaskUser = {
+  id: string;
+  email: string;
+};

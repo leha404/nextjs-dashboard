@@ -1,11 +1,12 @@
-import Pagination from '@/app/ui/invoices/pagination';
+import Pagination from '@/app/ui/tasks/pagination';
 import Search from '@/app/ui/search';
 import Table from '@/app/ui/tasks/table';
 import { CreateTask } from '@/app/ui/tasks/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
-import { fetchInvoicesPages, fetchTasksPages } from '@/app/lib/data';
+import { fetchInvoicesPages, fetchTasksPages, getUserIdByMail } from '@/app/lib/data';
+import { auth } from '@/auth';
 
 export default async function Page({
     searchParams,
@@ -15,8 +16,10 @@ export default async function Page({
         page?: string;
     };
 }) {
-    // TODO get from auth
-    const userId = '964cbfae-ba13-4749-b098-71cbdec5cfa4'
+    const session = await auth()
+    if (!session?.user?.email) return null
+
+    const userId = await getUserIdByMail(session.user.email)
 
     const query = searchParams?.query || '';
     const currentPage = Number(searchParams?.page) || 1;

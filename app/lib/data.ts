@@ -8,6 +8,8 @@ import {
   Revenue,
   TaskEditForm,
   TasksTable,
+  TaskUser,
+  User
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -298,5 +300,35 @@ export async function fetchTaskById(id: string) {
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch invoice.');
+  }
+}
+
+export async function getUserIdByMail(email: string) {
+  try {
+    const data = await sql<User>`SELECT * FROM todousers WHERE email=${email}`;
+    return data.rows[0].id;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch user.');
+  }
+}
+
+// Только сам пользователь или его подчиненные. Начальника не покажет
+export async function fetchTaskUsers(userId: string) {
+  try {
+    const data = await sql<TaskUser>`
+      SELECT
+          id,
+          email
+        FROM todousers
+      WHERE id = ${userId} OR managerid = ${userId}
+      ORDER BY email ASC
+    `;
+
+    const customers = data.rows;
+    return customers;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch all customers.');
   }
 }

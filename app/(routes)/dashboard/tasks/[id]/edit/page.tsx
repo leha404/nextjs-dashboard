@@ -1,5 +1,5 @@
 import Form from '@/app/ui/tasks/edit-form';
-import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
+import Breadcrumbs from '@/app/ui/tasks/breadcrumbs';
 import { fetchCustomers, fetchInvoiceById, fetchTaskById } from '@/app/lib/data';
 import { notFound } from 'next/navigation';
 

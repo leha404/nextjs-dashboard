@@ -1,10 +1,15 @@
 import Form from '@/app/ui/tasks/create-form';
-import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
-import { fetchCustomers } from '@/app/lib/data';
+import Breadcrumbs from '@/app/ui/tasks/breadcrumbs';
+import { fetchCustomers, fetchTaskUsers, getUserIdByMail } from '@/app/lib/data';
+import { auth } from '@/auth';
 
 export default async function Page() {
-    // TODO Подчиненные
-    // const customers = await fetchCustomers();
+    const session = await auth()
+    if (!session?.user?.email) return null
+
+    const userId = await getUserIdByMail(session.user.email)
+    
+    const taskUsers = await fetchTaskUsers(userId);
 
     return (
         <main>
@@ -18,8 +23,7 @@ export default async function Page() {
                     },
                 ]}
             />
-            {/* TODO props */}
-            <Form />
+            <Form creatorId={userId} taskUsers={taskUsers} />
         </main>
     );
 }

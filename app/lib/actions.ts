@@ -132,6 +132,8 @@ export async function authenticate(
 // Todo-app block
 const TaskFormSchema = z.object({
     id: z.string(),
+    creatorId: z.string(),
+    responsibleId: z.string(),
     taskname: z.string(),
     description: z.string(),
     enddate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
@@ -154,6 +156,7 @@ export type TaskState = {
         enddate?: string[];
         status?: string[];
         priority?: string[];
+        responsibleId?: string[];
     };
     message?: string | null;
 };
@@ -165,6 +168,8 @@ export async function createTask(prevState: TaskState, formData: FormData) {
         enddate: formData.get('enddate'),
         priority: formData.get('priority'),
         status: formData.get('status'),
+        creatorId: formData.get('creatorId'),
+        responsibleId: formData.get('responsibleId'),
     });
 
     if (!validatedFields.success) {
@@ -174,12 +179,11 @@ export async function createTask(prevState: TaskState, formData: FormData) {
         };
     }
 
-    const { taskname, description, enddate, priority, status} = validatedFields.data
+    const { taskname, description, enddate, priority, status, creatorId, responsibleId} = validatedFields.data
 
     const date = new Date().toISOString().split('T')[0];
 
     try {
-        // TODO user
         await sql`
             INSERT INTO todotasks (
                 name,
@@ -198,8 +202,8 @@ export async function createTask(prevState: TaskState, formData: FormData) {
                 ${enddate},
                 ${priority},
                 ${status},
-                '964cbfae-ba13-4749-b098-71cbdec5cfa4',
-                '964cbfae-ba13-4749-b098-71cbdec5cfa4',
+                ${creatorId},
+                ${responsibleId},
                 now() at time zone 'utc-5',
                 now() at time zone 'utc-5'
             )
