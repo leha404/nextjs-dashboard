@@ -65,7 +65,11 @@ export default function TasksTableClient({
                                                         >
                                                             <div className="flex items-center justify-between border-b pb-4">
                                                                 <div>
-                                                                    <div className="mb-2 flex items-center font-medium">
+                                                                    <div className={`
+                                                                        flex items-center gap-3 
+                                                                        ${new Date(task.end_date) < new Date() && task.status !== 'done' && task.status !== 'cancelled' ? 'text-red-500' : ''} 
+                                                                        ${task.status === 'done' ? 'text-green-500' : ''}
+                                                                    `}>
                                                                         <p>{task.name}</p>
                                                                     </div>
                                                                 </div>
@@ -95,7 +99,11 @@ export default function TasksTableClient({
                                             >
                                                 <div className="flex items-center justify-between border-b pb-4">
                                                     <div>
-                                                        <div className="mb-2 flex items-center font-medium">
+                                                        <div className={`
+                                                            flex items-center gap-3 
+                                                            ${new Date(task.end_date) < new Date() && task.status !== 'done' && task.status !== 'cancelled' ? 'text-red-500' : ''} 
+                                                            ${task.status === 'done' ? 'text-green-500' : ''}
+                                                        `}>
                                                             <p>{task.name}</p>
                                                         </div>
                                                     </div>
@@ -167,7 +175,11 @@ export default function TasksTableClient({
                                                                 className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                                                             >
                                                                 <td className="py-3 pl-6 pr-3 w-1/12">
-                                                                    <div className="flex items-center gap-3">
+                                                                    <div className={`
+                                                                        flex items-center gap-3 
+                                                                        ${new Date(task.end_date) < new Date() && task.status !== 'done' && task.status !== 'cancelled' ? 'text-red-500' : ''} 
+                                                                        ${task.status === 'done' ? 'text-green-500' : ''}
+                                                                    `}>
                                                                         <p>{task.name}</p>
                                                                     </div>
                                                                 </td>
@@ -201,7 +213,11 @@ export default function TasksTableClient({
                                                     className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                                                 >
                                                     <td className="py-3 pl-6 pr-3 w-1/12">
-                                                        <div className="flex items-center gap-3">
+                                                        <div className={`
+                                                            flex items-center gap-3 
+                                                            ${new Date(task.end_date) < new Date() && task.status !== 'done' && task.status !== 'cancelled' ? 'text-red-500' : ''} 
+                                                            ${task.status === 'done' ? 'text-green-500' : ''}
+                                                        `}>
                                                             <p>{task.name}</p>
                                                         </div>
                                                     </td>
