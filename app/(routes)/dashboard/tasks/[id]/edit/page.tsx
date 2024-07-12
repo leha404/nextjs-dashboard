@@ -1,18 +1,20 @@
 import Form from '@/app/ui/tasks/edit-form';
 import Breadcrumbs from '@/app/ui/tasks/breadcrumbs';
-import { fetchCustomers, fetchInvoiceById, fetchTaskById } from '@/app/lib/data';
+import { fetchCustomers, fetchInvoiceById, fetchTaskById, fetchTaskUsers, getUserIdByMail } from '@/app/lib/data';
 import { notFound } from 'next/navigation';
+import { auth } from '@/auth';
 
 export default async function Page({ params }: { params: { id: string } }) {
     const id = params.id;
-    // TODO
-    // const [invoice, customers] = await Promise.all([
-    //     fetchInvoiceById(id),
-    //     fetchCustomers(),
-    // ]);
 
-    const [task] = await Promise.all([
+    const session = await auth()
+    if (!session?.user?.email) return null
+
+    const userId = await getUserIdByMail(session.user.email)
+
+    const [task, taskUsers] = await Promise.all([
         fetchTaskById(id),
+        fetchTaskUsers(userId)
     ]);
     
 
@@ -32,7 +34,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                     },
                 ]}
             />
-            <Form task={task} />
+            <Form task={task} taskUsers={taskUsers} creatorId={userId} />
         </main>
     );
 }

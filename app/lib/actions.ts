@@ -148,7 +148,7 @@ const TaskFormSchema = z.object({
 });
 
 const CreateTask = TaskFormSchema.omit({ id: true });
-const UpdateTask = TaskFormSchema.omit({ id: true });
+const UpdateTask = TaskFormSchema.omit({ id: true, creatorId: true });
 
 export type TaskState = {
     errors?: {
@@ -179,9 +179,7 @@ export async function createTask(prevState: TaskState, formData: FormData) {
         };
     }
 
-    const { taskname, description, enddate, priority, status, creatorId, responsibleId} = validatedFields.data
-
-    const date = new Date().toISOString().split('T')[0];
+    const { taskname, description, enddate, priority, status, creatorId, responsibleId } = validatedFields.data
 
     try {
         await sql`
@@ -237,6 +235,7 @@ export async function updateTask(id: string, prevState: State, formData: FormDat
         enddate: formData.get('enddate'),
         priority: formData.get('priority'),
         status: formData.get('status'),
+        responsibleId: formData.get('responsibleId'),
     })
 
     if (!validatedFields.success) {
@@ -246,22 +245,31 @@ export async function updateTask(id: string, prevState: State, formData: FormDat
         };
     }
 
-    const { 
+    const {
         taskname,
         description,
         enddate,
         priority,
-        status
-     } = validatedFields.data
+        status,
+        responsibleId
+    } = validatedFields.data
 
     try {
         await sql`
             UPDATE todotasks
-            SET name=${taskname}, description=${description}, enddate=${enddate}, priority=${priority}, status=${status}
+            SET 
+                name=${taskname}, 
+                description=${description}, 
+                enddate=${enddate}, 
+                priority=${priority}, 
+                status=${status},
+                responsibleuserid=${responsibleId}
             WHERE id=${id}
         `;
     } catch (error) {
+        console.log(error)
         return {
+            error: {},
             message: 'Database Error: Failed to Update Task.',
         };
     }
